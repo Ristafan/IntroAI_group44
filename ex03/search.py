@@ -56,4 +56,5 @@ class Search:
       path.append(node.state)
 
     path.reverse()
+    print(path)
     return path
