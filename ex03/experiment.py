@@ -62,10 +62,11 @@ for init in SIMPLE_PANCAKE_PROBLEMS:
   run_informed_searches(problem)
   print("----------")
 
+"""
 for init in HARD_PANCAKE_PROBLEMS:
   problem = PancakeProblem(init)
   problem.dump()
 
   run_informed_searches(problem)
   print("----------")
-
+"""
