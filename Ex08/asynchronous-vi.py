@@ -28,7 +28,12 @@ def compute_q_value(inst: Instance, s: State, action: str, values: dict[State, f
     # TODO: add your code here.
     # The goal state has Q-value of 0.
     # Return a float.
-    raise NotImplementedError
+    '''reward: float = inst.rewards[s]
+    successors: list[tuple[State, float]] = inst.get_successors(s, action)
+    sum: float = 0
+    for successor in successors:
+        sum += successor[1] * 0.9 * values[successor[0]]
+    return reward + sum '''
 
 
 """
