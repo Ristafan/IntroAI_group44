@@ -28,12 +28,15 @@ def compute_q_value(inst: Instance, s: State, action: str, values: dict[State, f
     # TODO: add your code here.
     # The goal state has Q-value of 0.
     # Return a float.
-    '''reward: float = inst.rewards[s]
+    if inst.goal == s: 
+        return 0
+    reward: float = inst.rewards[s]
     successors: list[tuple[State, float]] = inst.get_successors(s, action)
     sum: float = 0
+    discount_factor: float = 0.9
     for successor in successors:
-        sum += successor[1] * 0.9 * values[successor[0]]
-    return reward + sum '''
+        sum += successor[1] * discount_factor * values[successor[0]]
+    return reward + sum 
 
 
 """
@@ -50,7 +53,14 @@ def compute_greedy_action_and_q_value(inst: Instance, s: State, values: dict[Sta
     # TODO: add your code here.
     # Make use of compute_q_value to compute Q-values.
     # Return a pair of best action and its Q-value.
-    raise NotImplementedError
+    res_q_value: float = 0
+    greedy_action: str = ""
+    for action in inst.actions:
+        q_value = compute_q_value(inst, s, action, values)
+        if q_value > res_q_value:
+            res_q_value = q_value
+            greedy_action = action
+    return (greedy_action, res_q_value)
 
 
 """
