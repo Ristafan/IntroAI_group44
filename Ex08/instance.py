@@ -1,10 +1,10 @@
 #! /usr/bin/env python3
 
 class State:
-    def __init__(self, x, y, id):
-        self.x = x
-        self.y = y
-        self.id = id
+    def __init__(self, x: int, y: int, id: int):
+        self.x: int = x
+        self.y: int = y
+        self.id: int = id
 
     def __str__(self):
         return '(id:{}, x:{}, y:{})'.format(self.id, self.x, self.y)
@@ -13,9 +13,9 @@ class State:
         return '(id:{}, x:{}, y:{})'.format(self.id, self.x, self.y)
 
 class Instance:
-    def __init__(self, width, height, succ_probs, rewards):
-        self.width = width
-        self.height = height
+    def __init__(self, width: int, height: int, succ_probs: list[list[float]], rewards: list[list[float]]):
+        self.width: int = width
+        self.height: int = height
 
         assert len(succ_probs) == self.height
         for succ_prob in succ_probs:
@@ -25,37 +25,37 @@ class Instance:
         for reward in rewards:
             assert len(reward) == self.width
 
-        self.actions = ['N', 'E', 'S', 'W']
+        self.actions: list[str] = ['N', 'E', 'S', 'W']
 
-        self.states = [State(x,y,(y*self.width+x)) for y in range(self.height) for x in range(self.width)]
-        self.init = self.states[0]
-        self.goal = self.states[-1]
+        self.states: list = [State(x,y,(y*self.width+x)) for y in range(self.height) for x in range(self.width)]
+        self.init: State = self.states[0]
+        self.goal: State = self.states[-1]
 
-        self.succ_probs = { self.get_state(x,y) : succ_probs[y][x] for y in range(self.height) for x in range(self.width) }
-        self.rewards =  { self.get_state(x,y) : rewards[y][x] for y in range(self.height) for x in range(self.width) }
+        self.succ_probs: dict[State, float] = { self.get_state(x,y) : succ_probs[y][x] for y in range(self.height) for x in range(self.width) }
+        self.rewards: dict[State, float] = { self.get_state(x,y) : rewards[y][x] for y in range(self.height) for x in range(self.width) }
 
 
-    def get_state(self, x, y):
+    def get_state(self, x: int, y: int) -> State:
         assert x >= 0 and x < self.width and y >= 0 and y < self.height
 
         return self.states[y * self.width + x]
 
 
-    def state_is_legal(self, state):
+    def state_is_legal(self, state: State) -> bool:
         return state.x >= 0 and state.x < self.width and state.y >= 0 and state.y < self.height
 
-    def action_is_applicable(self, state, action):
+    def action_is_applicable(self, state: State, action: str) -> bool:
         return (state != self.goal) and \
             ((action == 'N' and state.y < self.height-1) or \
              (action == 'E' and state.x < self.width-1) or \
              (action == 'S' and state.y > 0) or \
              (action == 'W' and state.x > 0))
 
-    def get_applicable_actions(self, state):
+    def get_applicable_actions(self, state: State) -> list[str]:
         assert self.state_is_legal(state)
         return [action for action in self.actions if self.action_is_applicable(state, action)]
 
-    def get_successors(self, state, action):
+    def get_successors(self, state: State, action: str) -> tuple[State, float]:
         assert self.state_is_legal(state)
         assert self.action_is_applicable(state, action)
         assert action in ['N', 'E', 'S', 'W']
@@ -78,7 +78,7 @@ class Instance:
 
     # Careful: in y-direction, we print in reverse order s.t. coordinates
     # are as in a typical coordinate system
-    def __str__(self):
+    def __str__(self) -> str:
         res = "Probabilities that moving is successful:\n"
         for y in reversed(range(self.height)):
             res += "[ " + "  ".join("{:.1f}".format(self.succ_probs[self.get_state(x,y)])
@@ -92,7 +92,7 @@ class Instance:
         return res
 
 
-def get_example_instance():
+def get_example_instance() -> Instance:
     probs = [[1.0, 1.0, 1.0, 0.4],
              [0.4, 0.4, 1.0, 0.4],
              [0.4, 1.0, 1.0, 0.4],
@@ -122,4 +122,5 @@ if __name__ == '__main__':
         for a in inst.get_applicable_actions(s):
             print('successors of applying {} in {} are {}'.format(a, s, inst.get_successors(s, a)))
         print('')
+
 
