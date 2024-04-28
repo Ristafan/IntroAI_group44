@@ -120,6 +120,7 @@ def asynchronous_value_iteration(inst: Instance, num_iterations: int) -> dict[St
     values = get_initial_values(inst)
     for i in range(num_iterations):
         bellman_update_in_place(inst, values)
+        print(f"iteration {i+1}")
         print_values(inst, values)
         print()
     greedy_policy = get_greedy_policy(inst, values)
