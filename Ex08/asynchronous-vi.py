@@ -30,6 +30,7 @@ def compute_q_value(inst: Instance, s: State, action: str, values: dict[State, f
     # Return a float.
     if inst.goal == s: 
         return 0
+    assert inst.action_is_applicable(s, action)
     reward: float = inst.rewards[s]
     successors: list[tuple[State, float]] = inst.get_successors(s, action)
     sum: float = 0
@@ -53,13 +54,14 @@ def compute_greedy_action_and_q_value(inst: Instance, s: State, values: dict[Sta
     # TODO: add your code here.
     # Make use of compute_q_value to compute Q-values.
     # Return a pair of best action and its Q-value.
-    res_q_value: float = 0
+    res_q_value: float = -1000000 # initialise to large negative value, else second if statement never works
     greedy_action: str = ""
     for action in inst.actions:
-        q_value = compute_q_value(inst, s, action, values)
-        if q_value > res_q_value:
-            res_q_value = q_value
-            greedy_action = action
+        if inst.action_is_applicable(s, action):
+            q_value = compute_q_value(inst, s, action, values)
+            if q_value > res_q_value:
+                res_q_value = q_value
+                greedy_action = action
     return (greedy_action, res_q_value)
 
 
@@ -70,12 +72,13 @@ Bellman equation for the given state-values (with discounted reward).
 returns:
     None
 """
-def bellman_update_in_place(values: dict[State, float]) -> None:
+def bellman_update_in_place(inst: Instance, values: dict[State, float]) -> None:
     # TODO: add your code here.
     # Make use of Python's random.choice to choose a random state.
     # Make use of compute_greedy_action_and_q_value to update
     # state-values with discount factor 0.9.
-    raise NotImplementedError
+    s: State = random.choice(inst.states)
+    _, values[s] = compute_greedy_action_and_q_value(inst, s, values)
 
 
 """
@@ -114,7 +117,13 @@ def asynchronous_value_iteration(inst: Instance, num_iterations: int) -> dict[St
     # and the current state-values (again using print_values(...)).
     # Return the final state-values and a greedy policy computed
     # using the provided get_greedy_policy(inst, values).
-    raise NotImplementedError
+    values = get_initial_values(inst)
+    for i in range(num_iterations):
+        bellman_update_in_place(inst, values)
+        print_values(inst, values)
+        print()
+    greedy_policy = get_greedy_policy(inst, values)
+    return values, greedy_policy
 
 
 if __name__ == "__main__":
