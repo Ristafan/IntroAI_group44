@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+# Martin Fähnrich, Liam Kontopulos, Gabriel Stegmaier
 
 import argparse
 import random
